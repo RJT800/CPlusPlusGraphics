@@ -13,4 +13,7 @@
   <ItemGroup>
     <ClCompile Include="src\application.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="res\shaders\basic.shader" />
+  </ItemGroup>
 </Project>
