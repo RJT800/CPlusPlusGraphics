@@ -1,15 +1,4 @@
-#pragma once
-#include <GL/glew.h>
-#include <iostream>
-//class Renderer
-//{
-//};
-
-
-#define ASSERT(x) if (!(x)) __debugbreak();
-#define GLCall(x) GLClearError();\
-    x;\
-    ASSERT(GLLogCall(#x, __FILE__, __LINE__))
+#include "Renderer.h"
 
 void GLClearError()
 {

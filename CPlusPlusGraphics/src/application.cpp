@@ -4,6 +4,9 @@
 #include <fstream>
 #include <string>
 #include <sstream>
+#include "Renderer.h"
+#include "VertexBuffer.h"
+#include "IndexBuffer.h"
 
 struct ShaderProgramSource
 {
@@ -122,7 +125,8 @@ int main(void)
     }
 
     std::cout << glGetString(GL_VERSION) << std::endl;
-    
+    {
+
     float positions[] = {
         -0.5f, -0.5f,
         0.5f, -0.5f,
@@ -141,24 +145,27 @@ int main(void)
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
 
-    unsigned int buffer;
-    glGenBuffers(1, &buffer);
-    glBindBuffer(GL_ARRAY_BUFFER, buffer);
-    glBufferData(GL_ARRAY_BUFFER, 12 * sizeof(float), positions, GL_STATIC_DRAW);
+    VertexBuffer vb(positions, 4 * 2 * sizeof(float));
+
+    //unsigned int buffer;
+    //glGenBuffers(1, &buffer);
+    //glBindBuffer(GL_ARRAY_BUFFER, buffer);
+    //glBufferData(GL_ARRAY_BUFFER, 12 * sizeof(float), positions, GL_STATIC_DRAW);
 
     //glEnableVertexArrayAttrib(GL_ARRAY_BUFFER, 0);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
+    //glEnableVertexAttribArray(0);
+    //glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
 
+    IndexBuffer ib(indices, 6);
 
-    unsigned int ibo;
-    glGenBuffers(1, &ibo);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(float), indices, GL_STATIC_DRAW);
+    //unsigned int ibo;
+    //glGenBuffers(1, &ibo);
+    //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+    //glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(float), indices, GL_STATIC_DRAW);
 
     //glEnableVertexArrayAttrib(GL_ARRAY_BUFFER, 0);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
+    GLCall(glEnableVertexAttribArray(0));
+    GLCall(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0));
 
 
 
@@ -176,10 +183,10 @@ int main(void)
     std::cout << "FRAGMENT" << std::endl;
     std::cout << source.FragmentSource << std::endl;
     
-    glBindVertexArray(0);
-    glUseProgram(0);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    GLCall(glBindVertexArray(0));
+    GLCall(glUseProgram(0));
+    GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
+    GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
 
 
     float r = 0.6f;
@@ -191,11 +198,11 @@ int main(void)
         glClear(GL_COLOR_BUFFER_BIT);
 
 
-        glUseProgram(shader);
-        glUniform4f(location, r, 0.9f, 0.1f, 0.0f);
+        GLCall(glUseProgram(shader));
+        GLCall(glUniform4f(location, r, 0.9f, 0.1f, 0.0f));
 
-        glBindVertexArray(vao);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+        GLCall(glBindVertexArray(vao));
+        GLCall(ib.Bind());
         //GLClearError();
         GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
         //ASSERT(GLLogCall());
@@ -215,6 +222,8 @@ int main(void)
     }
 
     glDeleteProgram(shader);
+
+    }
 
     glfwTerminate();
     return 0;
